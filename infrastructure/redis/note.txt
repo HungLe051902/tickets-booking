@@ -1,0 +1,37 @@
+-----------------------------------SET UP-----------------------------------
+----- Shutdown các node redis
+docker compose down -v
+-----  Start các node redis trong cluster
+docker compose up -d
+----- Command to create cluster (1 master - 1 slave)
+docker exec -it redis-node-1 redis-cli --cluster create 172.28.0.2:7001 172.28.0.3:7002 172.28.0.4:7003 172.28.0.5:7004 172.28.0.6:7005 172.28.0.7:7006 --cluster-replicas 1
+(Note: nếu chạy trên Windows thì mở Powershell với quyền admin rồi chạy lệnh trên)
+
+-----------------------------------VERIY CLUSTER-----------------------------------
+1. Access to random node and run:
+access to node 1
+    docker exec -it redis-node-1 redis-cli -c -p 7001
+check cluster infor
+    cluster info
+2. Check nodes
+access to node 1
+    docker exec -it redis-node-1 redis-cli -c -p 7001
+check node
+    cluser nodes
+
+
+-----------------------------------CÁC KHẢ NĂNG CỦA CLUSTER-----------------------------------
+Scalability 
+    horizontal, add more nodes to cluster
+High Avalability 
+    one master node fail => elect slave node to become master
+High Performace
+    handle parallel and multi tasks at the same time
+Sharding 
+Fault Tolerance 
+    one node fail => cluster still work
+    Not loss data thanks to Replication
+
+----- Replication
+----- Auto Failover
+----- Easy to scale
