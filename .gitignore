@@ -1,0 +1,62 @@
+# ---- .NET / Visual Studio ----
+bin/
+obj/
+[Bb]uild/
+[Ll]og/
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+.vs/
+
+# NuGet
+*.nupkg
+*.snupkg
+*.nuspec
+packages/
+*.nuget.props
+*.nuget.targets
+
+# Rider / JetBrains
+.idea/
+*.iml
+
+# Backup / temp
+*.bak
+*.swp
+*.tmp
+*.log
+
+# ---- Docker / Compose ----
+# Local volumes & bind mounts
+volumes/
+data/
+docker-data/
+docker-compose.override.yml
+.env
+
+# Docker build artifacts
+*.pid
+*.seed
+*.pid.lock
+.docker/
+.dockerignore
+
+# ---- OS Specific ----
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
