@@ -7,7 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookingService", "BookingSe
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{142FCEB2-4EED-44E3-B4BB-282B15D96415}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{51536E25-157B-4515-AAAD-B205B5364DF8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Shared\Shared.csproj", "{51536E25-157B-4515-AAAD-B205B5364DF8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentService", "PaymentService\PaymentService.csproj", "{210E186B-ECA3-40E0-9CB3-22D79DB812E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventoryService", "InventoryService\InventoryService.csproj", "{10BDABD7-9214-48DE-B206-EFE505056128}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationService", "NotificationService\NotificationService.csproj", "{FAFCF7F5-F8F1-4FAD-AF70-80C22C781F6C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +29,18 @@ Global
 		{51536E25-157B-4515-AAAD-B205B5364DF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51536E25-157B-4515-AAAD-B205B5364DF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51536E25-157B-4515-AAAD-B205B5364DF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{210E186B-ECA3-40E0-9CB3-22D79DB812E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{210E186B-ECA3-40E0-9CB3-22D79DB812E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{210E186B-ECA3-40E0-9CB3-22D79DB812E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{210E186B-ECA3-40E0-9CB3-22D79DB812E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10BDABD7-9214-48DE-B206-EFE505056128}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10BDABD7-9214-48DE-B206-EFE505056128}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10BDABD7-9214-48DE-B206-EFE505056128}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10BDABD7-9214-48DE-B206-EFE505056128}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAFCF7F5-F8F1-4FAD-AF70-80C22C781F6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAFCF7F5-F8F1-4FAD-AF70-80C22C781F6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAFCF7F5-F8F1-4FAD-AF70-80C22C781F6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAFCF7F5-F8F1-4FAD-AF70-80C22C781F6C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
