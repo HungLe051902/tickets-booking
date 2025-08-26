@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Shared.Models;
 
 namespace InventoryService.Infrastructure.Database
 {

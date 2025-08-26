@@ -2,6 +2,8 @@
 using Shared.Kafka.MessageTypes;
 using Shared.Kafka;
 using StackExchange.Redis;
+using InventoryService.Infrastructure.Database;
+using Shared.Enums;
 
 namespace InventoryService.Infrastructure.Kafka
 {
@@ -74,13 +76,11 @@ namespace InventoryService.Infrastructure.Kafka
                 await _producer.ProduceAsync("seat.released", new { showId = booking.ShowId, seats = booking.Seats, reason = "payment_failed" }, key: booking.Id, ct);
             }
         }
-    }
 
-    public enum BookingStatus
-    {
-        Failed = 1,
-        Pending = 0,
-        Paid = 2, Paired = 3,
-    }
 
+        //public async Task<bool> MarkSeatSoldAsync(int showId, string seat)
+        //{
+        //    var 
+        //}
+    }
 }

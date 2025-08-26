@@ -1,6 +1,6 @@
-﻿using BookingService.Helpers.Enums;
+﻿using Shared.Enums;
 
-namespace BookingService.Models
+namespace Shared.Models
 {
     public class Booking
     {
