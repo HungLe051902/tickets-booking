@@ -1,8 +1,8 @@
 ﻿using BookingService.Data;
-using BookingService.Helpers.Enums;
-using BookingService.Models;
 using BookingService.Records;
+using Shared.Enums;
 using Shared.Kafka;
+using Shared.Models;
 using StackExchange.Redis;
 
 namespace BookingService.Services
@@ -19,14 +19,14 @@ namespace BookingService.Services
             _db = db;
         }
 
-        public async Task<HoldResult> HoldSeatsAsync(string bookingId, int showId, string[] seats, string userId, TimeSpan holdTtl)
+        public async Task<HoldResult> HoldSeatsAsync(Guid bookingId, int showId, int[] seatNumbers, string userId, TimeSpan holdTtl)
         {
             var dbRedis = _redis.GetDatabase();
             var lockVals = new List<(string key, string val)>();
 
-            foreach (var seat in seats)
+            foreach (var seatNumber in seatNumbers)
             {
-                var key = $"lock:show:{showId}:seat:{seat}";
+                var key = $"lock:show:{showId}:seat:{seatNumber}";
                 var val = $"{bookingId}:{userId}:{Guid.NewGuid()}";
                 var ok = await dbRedis.StringSetAsync(key, val, holdTtl, When.NotExists);
                 if (!ok)
@@ -37,14 +37,14 @@ namespace BookingService.Services
                         if ((string?)await dbRedis.StringGetAsync(k) == v)
                             await dbRedis.KeyDeleteAsync(k);
                     }
-                    return new HoldResult(false, $"Seat {seat} is being held by someone else.");
+                    return new HoldResult(false, $"Seat {seatNumber} is being held by someone else.");
                 }
                 lockVals.Add((key, val));
-                await dbRedis.StringSetAsync($"hold:show:{showId}:seat:{seat}", bookingId, holdTtl);
+                await dbRedis.StringSetAsync($"hold:show:{showId}:seat:{seatNumber}", bookingId.ToString(), holdTtl);
             }
 
             // create pending booking (Outbox recommended)
-            _db.Bookings.Add(new Booking { Id = bookingId, ShowId = showId, Seats = seats, Status = BookingStatus.Pending });
+            _db.Bookings.Add(new Booking { Id = bookingId, ShowId = showId, Status = BookingStatus.Pending });
             await _db.SaveChangesAsync();
 
             await _producer.ProduceAsync("seat.held", new
@@ -54,10 +54,10 @@ namespace BookingService.Services
                 occurredAt = DateTime.UtcNow,
                 bookingId,
                 showId,
-                seats,
+                seatNumbers,
                 userId,
                 expiresAt = DateTime.UtcNow.Add(holdTtl)
-            }, key: bookingId);
+            }, key: bookingId.ToString());
 
             return new HoldResult(true, "Held");
         }

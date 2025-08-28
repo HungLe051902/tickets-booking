@@ -4,6 +4,7 @@ using Shared.Kafka;
 using StackExchange.Redis;
 using InventoryService.Infrastructure.Database;
 using Shared.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace InventoryService.Infrastructure.Kafka
 {
@@ -26,17 +27,19 @@ namespace InventoryService.Infrastructure.Kafka
 
             var dbRedis = _redis.GetDatabase();
 
+            var seats = await _db.Seats.Where(x => x.BookingId.HasValue && x.BookingId.Value == booking.Id).ToListAsync();
+
             if (evt.Success)
             {
                 // Optimistic update seat -> Sold (pseudo)
-                foreach (var seat in booking.Seats)
+                foreach (var seat in seats)
                 {
-                    var updated = await _db.MarkSeatSoldAsync(booking.ShowId, seat); // bạn triển khai với WHERE Version/X
+                    var updated = await MarkSeatSoldAsync(booking.ShowId, seat.SeatNumber); // bạn triển khai với WHERE Version/X
                     if (!updated)
                     {
                         booking.Status = BookingStatus.Failed;
                         await _db.SaveChangesAsync();
-                        await _producer.ProduceAsync("seat.released", new { showId = booking.ShowId, seats = booking.Seats, reason = "race" }, key: booking.Id);
+                        await _producer.ProduceAsync("seat.released", new { showId = booking.ShowId, seats = booking.Seats, reason = "race" }, key: booking.Id.ToString());
                         return;
                     }
                 }
@@ -60,7 +63,7 @@ namespace InventoryService.Infrastructure.Kafka
                     seats = booking.Seats,
                     userId = booking.UserId,
                     issuedAt = DateTime.UtcNow
-                }, key: booking.Id, ct);
+                }, key: booking.Id.ToString(), ct);
             }
             else
             {
@@ -68,19 +71,33 @@ namespace InventoryService.Infrastructure.Kafka
                 await _db.SaveChangesAsync();
 
                 // Release seats
-                foreach (var seat in booking.Seats)
+                foreach (var seat in seats)
                 {
                     await dbRedis.KeyDeleteAsync($"hold:show:{booking.ShowId}:seat:{seat}");
                     await dbRedis.KeyDeleteAsync($"lock:show:{booking.ShowId}:seat:{seat}");
                 }
-                await _producer.ProduceAsync("seat.released", new { showId = booking.ShowId, seats = booking.Seats, reason = "payment_failed" }, key: booking.Id, ct);
+                await _producer.ProduceAsync("seat.released", new { showId = booking.ShowId, seats = seats.Select(x => x.SeatNumber), reason = "payment_failed" }, key: booking.Id.ToString(), ct);
             }
         }
 
 
-        //public async Task<bool> MarkSeatSoldAsync(int showId, string seat)
-        //{
-        //    var 
-        //}
+        public async Task<bool> MarkSeatSoldAsync(int showId, int seatNumber)
+        {
+            try
+            {
+                var seat = _db.Seats.FirstOrDefault(x => x.ShowId == showId && x.SeatNumber == seatNumber);
+                if (seat != null)
+                {
+                    seat.Status = SeatStatus.Sold;
+                    await _db.SaveChangesAsync();
+                    return true;
+                }
+                else { return false; }
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return false;
+            }
+        }
     }
 }
